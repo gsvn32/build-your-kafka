@@ -62,17 +62,31 @@ int main(int argc, char* argv[]) {
     //     int32_t correlation_id;
 
     // };
-    char sentmsg[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00};
+    
     
     int client_fd = accept(server_fd, reinterpret_cast<struct sockaddr*>(&client_addr), &client_addr_len);
     std::cout << "Client connected\n";
+    std::byte received [1024];
+    ssize_t rcflag = recv(client_fd,received,sizeof(received),0);
+    char sentmsg[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // before recv
+    if(rcflag==-1){
+        std::cerr<<"Failed recv";
+    }
+    else{
+        int j=4;
+        for(int i=8;i<12;i++)
+        {
+            sentmsg[j]=(int)received[i];
+            j++;
+        }
+            
+    }
+    
     ssize_t sent = send(client_fd,&sentmsg,sizeof(sentmsg),0);
     if(sent==-1){
         std::cerr<<"failed sendmsg";
     }
-    else{
-        std::cout<<"Sent data";
-    }
+
     close(client_fd);
 
     close(server_fd);
