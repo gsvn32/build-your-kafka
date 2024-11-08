@@ -56,8 +56,23 @@ int main(int argc, char* argv[]) {
     
     // Uncomment this block to pass the first stage
     // 
+    //msg struct
+    // struct msghdr {
+    //     int32_t message_size;
+    //     int32_t correlation_id;
+
+    // };
+    char sentmsg[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00};
+    
     int client_fd = accept(server_fd, reinterpret_cast<struct sockaddr*>(&client_addr), &client_addr_len);
     std::cout << "Client connected\n";
+    ssize_t sent = send(client_fd,&sentmsg,sizeof(sentmsg),0);
+    if(sent==-1){
+        std::cerr<<"failed sendmsg";
+    }
+    else{
+        std::cout<<"Sent data";
+    }
     close(client_fd);
 
     close(server_fd);
